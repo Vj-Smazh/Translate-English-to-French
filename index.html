@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hi</title>
+  <style>
+    #demo1,
+    #demo {
+      height:400px;
+      margin: 20px;
+      overflow: auto;
+      border: 2px solid rgb(255, 255, 255);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="sec">
+    <center>
+    <h1>Frequency</h1>
+    <p id="demo"></p>
+    <br>
+    <h1>STORY</h1>
+    <p id="demo1"></p>
+    <br>
+  </center>
+    
+  </div>
+  </div>
+
+
+  <script>
+    const startTime = performance.now();
+    console.log("started")
+    let a2 = "";
+    let a = [];
+    let c = [];
+    let d = [];
+    let e = [];
+    let frequency = [];
+    let frequency1 = [];
+    let frequency2 = [];
+    let frequency3 = [];
+    let story = "";
+    let translate = [];
+    let finalfrequency = ""
+
+
+    fetch("french_dictionary.csv")
+      .then(x => x.text())
+      .then(y => {
+        a2 = y
+        let data1 = "";
+        let count = 0;
+        for (i = 0; i < a2.length; i++) {
+
+          if (a2[i] === ',' && count == 0) {
+            a.push(data1);
+            data1 = '';
+            count = 1;
+          } else if (a2[i] === '\n') {
+            c.push(data1);
+            data1 = '';
+            count = 0
+          } else if (i === a2.length) {
+            c.push(data1);
+            data1 = '';
+            count = 0;
+          } else {
+            data1 += a2[i]
+          }
+
+        }
+
+        for (i = 0; i < a.length; i++) {
+          z = a[i].split("");
+          cap = (z.shift()).toUpperCase();
+          z.unshift(cap);
+          join = z.join("")
+          d.push(join)
+        }
+        for (i = 0; i < a.length; i++) {
+          e.push(a[i].toUpperCase())
+        }
+
+
+
+        fetch("t8.shakespeare.txt")
+          .then(x => x.text())
+          .then(y => {
+            story = y;
+            for (i = 0; i < a.length; i++) {
+              alastindex = story.lastIndexOf(a[i]);
+              index = 0;
+              loop = 0;
+              while (index < alastindex) {
+                index = story.indexOf(a[i], index);
+                index = index + 1;
+                loop += 1;
+
+              }
+              frequency1.push(loop);
+              loop = 0;
+
+
+            }
+            for (i = 0; i < d.length; i++) {
+              dlastindex = story.lastIndexOf(d[i]);
+              index = 0;
+              loop1 = 0
+              while (index < dlastindex) {
+                index = story.indexOf(d[i], index);
+                index = index + 1;
+                loop1 += 1;
+              }
+              frequency2.push(loop1)
+              loop1 = 0;
+            }
+            for (i = 0; i < e.length; i++) {
+              elastindex = story.lastIndexOf(e[i]);
+              index = 0;
+              loop2 = 0;
+              while (index < elastindex) {
+                index = story.indexOf(e[i], index);
+                index = index + 1;
+                loop2 += 1;
+
+              }
+              frequency3.push(loop2)
+              frequency.push(Number(frequency1[i]) + Number(frequency2[i]) + Number(frequency3[i]))
+
+
+
+            }
+            for (i = 0; i < a.length; i++) {
+              finalfrequency += a[i]+","+c[i]+','+ frequency[i] + "\n";
+            }
+            document.getElementById("demo").textContent = finalfrequency;
+
+            translate.push(y);
+            for (i = 0; i < a.length; i++) {
+              let pattern = new RegExp(a[i], "ig");
+              translate[0] = translate[0].replace(pattern, c[i]);
+              translate.push(translate[0])
+              translate.shift();
+            }
+
+            document.getElementById("demo1").textContent = translate[0];
+
+            const endTime = performance.now();
+            console.log(`Time Taken in Minutes ${(endTime - startTime)} milliseconds.`);
+            console.log("finished");
+            console.log(`Memory Used ${performance.memory.usedJSHeapSize / Math.pow(1000, 2)} MB`)
+          })
+      })
+  </script>
+</body>
+
+</html>
